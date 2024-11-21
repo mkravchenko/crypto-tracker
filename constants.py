@@ -1,10 +1,10 @@
-"""sadfdas"""
+"""Module that contains constants"""
 
 
-class SpreadseetScope:
+class SpreadsheetScope:
     """
     If modifying these scopes, delete the file coin.json.
     """
 
     read_write = "https://www.googleapis.com/auth/spreadsheets"
-    ead_only = "https://www.googleapis.com/auth/spreadsheets/readonly"
+    read_only = "https://www.googleapis.com/auth/spreadsheets/readonly"
