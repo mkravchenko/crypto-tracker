@@ -6,7 +6,7 @@ from googleapiclient.errors import HttpError
 import time
 import os
 
-from constants import SpreadseetScope
+from constants import SpreadsheetScope
 from crypto_client import CryptoClientApi
 from google_client import GoogleSpreadsheetClient
 
@@ -21,40 +21,33 @@ def main(
     spreadsheet_client: GoogleSpreadsheetClient,
     once: bool = True,
 ):
-    try:
-        coins = spreadsheet_client.read_spreadsheet(
-            range=SAMPLE_RANGE_NAME.format("A2:A")
+    coins = spreadsheet_client.read_spreadsheet(range=SAMPLE_RANGE_NAME.format("A2:A"))
+
+    while True:
+        coins_prices = []
+        for coin in coins:
+            coin_price = crypto_client.get_coins_price(coin[0])
+            if coin_price:  # skip the coins where no USDT/USDC identifiers
+                coins_prices.append([str(coin_price)])
+
+        spreadsheet_client.update_spreadsheet(
+            range=SAMPLE_RANGE_NAME.format("E2:E"), values=coins_prices
         )
 
-        while True:
-            coins_prices = []
-            for coin in coins:
-                coin_price = crypto_client.get_coins_price(coin[0])
-                if coin_price:  # skip the coins where no USDT/USDC identifiers
-                    coins_prices.append([str(coin_price)])
+        if once:
+            break
 
-            spreadsheet_client.update_spreadsheet(
-                range=SAMPLE_RANGE_NAME.format("E2:E"), values=coins_prices
-            )
+        time.sleep(2)
 
-            if once:
-                break
-
-            time.sleep(2)
-
-        spreadsheet_client.read_spreadsheet(
-            range=SAMPLE_RANGE_NAME.format(f"G2:G"), print_result=True
-        )
-
-    except HttpError as err:
-        print(err)
+    spreadsheet_client.read_spreadsheet(
+        range=SAMPLE_RANGE_NAME.format(f"G2:G"), print_result=True
+    )
 
 
 if __name__ == "__main__":
     spreadsheet_client = GoogleSpreadsheetClient(
-        SAMPLE_SPREADSHEET_ID, SpreadseetScope.read_write
+        SAMPLE_SPREADSHEET_ID, SpreadsheetScope.read_write
     )
     crypto_client = CryptoClientApi()
-    once = True
 
-    main(crypto_client, spreadsheet_client, once)
+    main(crypto_client, spreadsheet_client)

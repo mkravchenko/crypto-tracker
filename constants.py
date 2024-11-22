@@ -1,4 +1,4 @@
-"""Module that contains constants"""
+"""Module that contains"""
 
 
 class SpreadsheetScope:
