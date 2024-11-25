@@ -1,0 +1,4 @@
+python-binance==1.0.22
+google==3.0.0
+google-api-python-client==2.154.0
+google_auth_oauthlib==1.2.1
